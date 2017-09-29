@@ -145,11 +145,10 @@ class Game extends Phaser.Game {
     testUndefinedKey() {
         console.log("Running Test: testUndefinedKey()");
 
-        this.signals.sendSignal("undefined");
         this.signals.sendSignal();
         this.signals.sendSignal(null);
 
-        console.log("Passed if the previous 3 console logs said: 'Signals:: Attempted to dispatch a signal with an undefined or null key.'");
+        console.log("Passed if the previous 2 console logs said: 'Signals:: Attempted to dispatch a signal with an undefined or null key.'");
     }
 
     testUnacceptableKey() {
@@ -162,6 +161,8 @@ class Game extends Phaser.Game {
     }
 
     testDestroy() {
+        console.log("Running Test: testDestroy()");
+
         this.signals.destroy();
 
         if (this.signals._signals) {

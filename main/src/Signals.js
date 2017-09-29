@@ -7,7 +7,7 @@
 import ISignals from "./ISignals";
 import IDestructable from "./IDestructable";
 import ITargetObj from "./ITargetObj";
-let Phaser = require("./phaser.min");
+let Phaser = require("../lib/phaser.min");
 
 /**
  * Register your listener to a signal key.
