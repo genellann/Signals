@@ -1,5 +1,7 @@
 /**
- * Created by gradley on 1/9/2017.
+ * Created by Genell Radley in 2017.
+ *
+ * https://github.com/gradley/PhaserSignals
  */
 
 /**

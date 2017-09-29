@@ -2,7 +2,7 @@
 
 ## CURRENT WAY
 ### Example
-Here is a scenerio of how signals work in Phaser currently: 
+Here is a scenerio of how signals work in Phaser out of the box: 
 
     class MyClass {
     
@@ -25,12 +25,12 @@ Here is a scenerio of how signals work in Phaser currently:
     }
 
 ### Problems
-- You have to have access to the object that the signal instance lives on in order to dispatch the signal.
+- You have to have a reference to the signal instance in order to dispatch the signal.
 - One to one ratio. 
 
 ## BETTER WAY
-The Signals library is meant to be used as a singleton that can be accessed from anywhere in the code base at any time.
-The Signals library is basically a house where all your signal instances live.
+The Signals library is a...
+
 ### Example
 
     class MyClass {
@@ -52,9 +52,47 @@ The Signals library is basically a house where all your signal instances live.
     }
 
 ### Why it's better
+- You can add any listener to any signal. 
 - You can register any number of listeners to the same signal.
+- You can have listeners registered to the same signal throughout your code with out coupling.
+- Dispatch any signal anywhere/anytime.
+- You do not need to have a reference to the signal in order to dispatch it. 
+- You can send a signal whether or not there is something listening for it.
+
+### Methods
+    /**
+     * Register a listener to a signal key.
+     * @param {string} key - The key mapped to a signal. Be sure to use unique keys. 
+     * @param {function} listener - The function that will respond when this signal is dispatched.
+     * @param {object} listenerContext - The context of the listener.
+     * @param {boolean} [addOnce=false] - Remove signal after sent once.
+     */
+    registerSignal(key, listener, listenerContext, addOnce = false)
+    
+    /**
+     * Dispatch the signal mapped to this key.
+     * @param {string} key - The key mapped to a signal.
+     * @param {ITargetObj|object} [targetObj=null] - An object you can pass to the listener function(s).
+     */
+    sendSignal(key, targetObj = null)
+    
+    /**
+     * Remove a listener from a signal.
+     * @param {string} key - The key mapped to the signal.
+     * @param {function} listener - The listener mapped to the signal.
+     * @param {object} context - The context of the listener mapped to the signal.
+     */
+    removeSignal(key, listener, context)
+    
+    /**
+     * Remove all listeners from a signal.
+     * @param {string} [key=null] - The key mapped to the signal. If null, all signals for every key will be removed.
+     */
+    removeAllSignals(key = null)
 
 ### Ways to use the Signals library
+The Signals library is meant to be used as a singleton that can be accessed from anywhere in the code base at any time.
+The Signals library is basically a house where all your signal instances live.
 If you are changing game states, you will want to create your Signals singleton on the game object. 
 Usually, every class in a Phaser game has access to the this.game instance.
 
@@ -81,21 +119,76 @@ Usually, every class in a Phaser game has access to the this.game instance.
 You can have more than one Signals instance in your game.
 
 ### Changing Game States
-If you are using states in your game, you must remove all signals between states.
+If you are using states in your game, you must remove all signals between states. 
+Either right before or right after.
+Because/Or else...
+    
+    this.game.signals.removeAllSignals();
+    this.game.state.start("newState");
 
 ## THE MIN.JS
 There are two library versions you can choose from.
 
 ### Simple
 
+    let signals = new Signals();
+    
 ### Full
 
-### Getting it into your game
-    index.html
-    <script></script>
+    let signals = new Signals.Signals();
+    
+    let target = new Signals.TargetObj(...);
+    signals.registerSignal(...);
+    signals.sendSignal("key", target);
 
+### Getting it into your game
+Must have phaser. Compatible with these versions:
+
+    index.html
+    <script type="text/javascript" src="lib/phaser.min.js"></script>
+    <script type="text/javascript" src="lib/phaser-signals-simple-0.0.1.min.js"></script>
+
+### Recommendations
+Please use constants for your keys.
+
+Constants have great benefits, including but not limited to:
+- They protect your code from typos. 
+- They keep things organized. 
+- They make changing the key easier because you only have to change it in one place.
+
+You can add consts at the bottom of any class with Object.defineProperties(). 
+
+I often make an empty class just to use as a holder for my consts. This is called an enum.
+   
+    import SignalKeys from "./SignalKeys"
+    
+    class SomeClass {
+        
+        someFunc() {
+            signals.registerSignal(SignalKeys.LEVELED_UP, this.onLevelUp, this);
+            
+            signals.sendSignal(SignalKeys.LEVELED_UP);
+        }
+    }
+    ---
+    class SignalKeys {
+    }
+    Object.defineProperties(SignalKeys, {
+        "LEVELED_UP": {
+            value: "leveledUp"
+        },
+        "GAME_OVER": {
+            value: "playerDied"
+        }
+    }
+    
 ## UNIT TESTS
+Need to run npm install & grunt task then open index open the inspector
+
 
 ## JSDOCS
 
+## See my other libs
+
 ## CREDITS
+This project used the [webpack-library-starter](https://github.com/krasimir/webpack-library-starter) project

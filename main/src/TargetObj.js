@@ -1,5 +1,7 @@
 /**
- * Created by gradley on 1/10/2017.
+ * Created by Genell Radley in 2017.
+ *
+ * https://github.com/gradley/PhaserSignals
  */
 
 import ITargetObj from "./ITargetObj";
