@@ -156,7 +156,7 @@ Constants have great benefits, including but not limited to:
 - They keep things organized. 
 - They make changing the key easier because you only have to change it in one place.
 
-You can add consts at the bottom of any class with Object.defineProperties(). 
+You can add consts at the bottom of any class with Object.defineProperties(). Consts are ALL-CAPS by convention.
 
 I often make an empty class just to use as a holder for my consts. This is called an enum.
    
