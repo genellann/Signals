@@ -98,5 +98,4 @@ class Signals /* implements ISignals, IDestructable */ {
     }
 }
 
-export let signals = new Signals();
 export default Signals;

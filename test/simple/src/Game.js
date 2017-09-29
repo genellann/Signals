@@ -11,86 +11,207 @@ class Game extends Phaser.Game {
     constructor() {
         super();
 
-        this.game.signals = new Signals();
-
+        this.before();
         this.testRegisterSignal();
+
+        this.before();
         this.testPassObj();
+
+        this.before();
         this.testAddOnce();
+
+        this.before();
         this.testRemoveSignal();
+
+        this.before();
         this.testRemoveAllOnOneSignal();
+
+        this.before();
         this.testRemoveAll();
+
+        this.before();
+        this.testUndefinedKey();
+
+        this.before();
+        this.testUnacceptableKey();
+
+        this.before();
+        this.testDestroy();
+    }
+
+    before() {
+        this.signals = null;
+        this.signals = new Signals();
+    }
+
+    testRegisterSignal() {
+        console.log("Running Test: testRegisterSignal()");
+
+        this.signals.registerSignal(Game.VIOLET, this.giveWater, this);
+
+        if (!this.signals._signals.hasOwnProperty(Game.VIOLET) ||
+            this.signals._signals[Game.VIOLET]._bindings[0]._listener !== this.giveWater ||
+            this.signals._signals[Game.VIOLET]._bindings[0].context !== this) {
+            console.log("Failed");
+        } else {
+            console.log("Passed");
+        }
     }
 
     testAddOnce() {
-        console.log("Running Test: addOnce");
+        console.log("Running Test: testAddOnce()");
 
-        this.game.signals.registerSignal("addOnce", () => {
-            if (this.game.signals._signals.hasOwnProperty("addOnce")) {
-                console.log("Test Failed: addOnce - ");
-            } else {
-                console.log("Test Passed: addOnce - ");
-            }
-        }, this, true);
+        this.signals.registerSignal(Game.DAFFODIL, this.giveSun, this, true);
 
-        this.game.signals.sendSignal("addOnce");
+        this.signals.sendSignal(Game.DAFFODIL);
+
+        if (this.signals._signals[Game.DAFFODIL]._bindings.length > 0) {
+            console.log("Failed");
+        } else {
+            console.log("Passed");
+        }
     }
 
     testPassObj() {
         console.log("Running Test: passObj");
 
-        this.game.signals.registerSignal("key1", (obj) => {
-            if (!obj.hasOwnProperty("test")) {
-                console.log("Test Failed: passObj - ");
+        this.signals.registerSignal(Game.TULIP, (obj) => {
+            if (!obj.test) {
+                console.log("Failed");
             } else {
-                console.log("Test Passed: passObj - ");
+                console.log("Passed");
             }
         }, this);
 
-        this.game.signals.sendSignal("key1", {"test": "test"});
+        this.signals.sendSignal(Game.TULIP, {test: "test"});
     }
 
     testRemoveSignal() {
-        console.log("Running Test: removeSignal");
+        console.log("Running Test: testRemoveSignal()");
 
-        this.game.signals.registerSignal("key3", this.listener1, this);
-        this.game.signals.registerSignal("key3", this.listener2, this);
-        this.game.signals.removeSignal("key3", this.listener1, this);
+        this.signals.registerSignal(Game.DAISY, this.giveWater, this);
+        this.signals.registerSignal(Game.DAISY, this.giveSun, {});
+
+        this.signals.removeSignal(Game.DAISY, this.giveWater, this);
+
+        let pass = true;
+        let len = this.signals._signals[Game.DAISY]._bindings.length;
+        let binding;
+        for (let i = 0; i < len; i++) {
+            binding = this.signals._signals[Game.DAISY]._bindings[i];
+            if (binding._listener === this.giveWater && binding.context === this) {
+                pass = false;
+            }
+        }
+
+        if (!pass) {
+            console.log("Failed");
+        } else {
+            console.log("Passed");
+        }
     }
 
     testRemoveAllOnOneSignal() {
-        console.log("Running Test: removeAll");
+        console.log("Running Test: testRemoveAllOnOneSignal()");
 
-        this.game.signals.registerSignal("key4", this.listener1, this);
-        this.game.signals.registerSignal("key4", this.listener2, this);
+        this.signals.registerSignal(Game.PETUNIA, this.giveWater, this);
+        this.signals.registerSignal(Game.PETUNIA, this.giveSun, this);
 
-        this.game.signals.removeAllSignals("key4");
+        this.signals.removeAllSignals(Game.PETUNIA);
 
-        if (this.game.signals._signals.hasOwnProperty("key4")) {
-            console.log("Test Failed: removeAll - ");
+        if (this.signals._signals.hasOwnProperty(Game.PETUNIA)) {
+            console.log("Failed");
         } else {
-            console.log("Test Passed: removeAll - ");
+            console.log("Passed");
         }
     }
 
     testRemoveAll() {
-        console.log("Running Test: removeAll");
+        console.log("Running Test: testRemoveAll()");
 
-        this.game.signals.registerSignal("key5", this.listener1, this);
+        this.signals.registerSignal(Game.LILY, this.giveWater, this);
+        this.signals.registerSignal(Game.ZINNIA, this.giveShade, this);
 
-        this.game.signals.removeAllSignals();
+        this.signals.removeAllSignals();
 
-        if (Object.length(this.game.signals._signals) > 0) {
-            console.log("Test Failed: removeAll - ");
+        if (Object.keys(this.signals._signals).length > 0) {
+            console.log("Failed");
         } else {
-            console.log("Test Passed: removeAll - ");
+            console.log("Passed");
         }
     }
 
-    listener1(obj) {
+    testUndefinedKey() {
+        console.log("Running Test: testUndefinedKey()");
+
+        this.signals.sendSignal();
+        this.signals.sendSignal(null);
+
+        console.log("Passed if the previous 2 console logs said: 'Signals:: Attempted to dispatch a signal with an undefined or null key.'");
     }
 
-    listener2(obj) {
+    testUnacceptableKey() {
+        console.log("Running Test: testUnacceptableKey()");
+
+        this.signals.sendSignal(1);
+        this.signals.sendSignal({});
+
+        console.log("Passed if the previous 2 console logs began with: 'Signals:: Keys must be of type 'string'...");
+    }
+
+    testDestroy() {
+        console.log("Running Test: testDestroy()");
+
+        this.signals.destroy();
+
+        if (this.signals._signals) {
+            console.log("Failed");
+        } else {
+            console.log("Passed");
+        }
+    }
+
+    giveWater() {
+    }
+
+    giveSun() {
+    }
+
+    giveShade() {
     }
 }
+
+Object.defineProperties(Game, {
+    "ROSE": {
+        value: "rose"
+    },
+    "DAFFODIL": {
+        value: "daffodil"
+    },
+    "TULIP": {
+        value: "tulip"
+    },
+    "PETUNIA": {
+        value: "petunia"
+    },
+    "LILY": {
+        value: "lily"
+    },
+    "DAISY": {
+        value: "daisy"
+    },
+    "PANSY": {
+        value: "pansy"
+    },
+    "CARNATION": {
+        value: "carnation"
+    },
+    "VIOLET": {
+        value: "violet"
+    },
+    "ZINNIA": {
+        value: "zinnia"
+    }
+});
 
 new Game();
