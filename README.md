@@ -25,29 +25,82 @@ Here is a scenerio of how signals work in Phaser out of the box:
     }
 
 ### Problems
-- You have to have a reference to the signal instance in order to dispatch the signal.
-- One to one ratio. 
+- You have to have a reference to the signal instance in order to dispatch the signal. 
+- This is a problem if you are wanting to properly encapsulate code because all your code needs to share references to the rest of the code.
+- One to one ratio. In the above example, if I have another class that wants to listen to the signal, you have two ways you can do it (see below). Any way you do this, you end up with structural problems about where should a signal live (design) and what properties/methods should other classes be able to access (encapsulation).
+
+
+    First Way -
+    class ClassA {
+        
+        someFunc() {
+            this.signal = new Phaser.Signal();
+            this.signal.add(this.listener, this);
+        }
+    }
+        
+    class ClassB {
+
+        someFunc() {
+            this.signal = new Phaser.Signal();
+            this.signal.add(this.listener, this);
+        }
+    }
+
+    class ClassC {
+    
+        someFunc() {
+            let classA = new ClassA();
+            classA.signal.dispatch();
+            
+            let classB = new ClassB();
+            classB.signal.dispatch();
+        }   
+    }
+.
+
+
+    Second Way -
+    class MyClass {
+    
+        someFunc() {
+            let classA = new ClassA();
+            let classB = new ClassB();
+
+            let signal = new Phaser.Signal();
+            signal.add(classA.listener, classA);
+            signal.add(classB.listener, classB);
+
+            signal.dispatch();
+        }   
+    }
+
 
 ## BETTER WAY
-The Signals library is a...
+The Signals library gives you one object that all your signals live on. 
+
+It allows you to create a signal while mapping it to a key. Then you are able to (1) add listeners to a signal, and (2) dispatch a signal by its key. 
 
 ### Example
 
-    class MyClass {
-    
-        myFunc() {
-            Signals.registerSignal("key", this.listener, this);
-        }
+    class ClassA {
         
-        listener() {
-            // do something when the signal is dispatched
+        someFunc() {
+            Signals.registerSignal("uniqueKey", this.listener, this);
         }
     }
+        
+    class ClassB {
+
+        someFunc() {
+            Signals.registerSignal("uniqueKey", this.listener, this);
+        }
+    }
+
+    class ClassC {
     
-    class AnotherClass {
-    
-        anotherFunc() {
-            Signals.sendSignal("key");
+        someFunc() {
+            Signals.sendSignal("uniqueKey");
         }   
     }
 
@@ -91,14 +144,51 @@ The Signals library is a...
     removeAllSignals(key = null)
 
 ### Ways to use the Signals library
-The Signals library is meant to be used as a singleton that can be accessed from anywhere in the code base at any time.
-The Signals library is basically a house where all your signal instances live.
-If you are changing game states, you will want to create your Signals singleton on the game object. 
-Usually, every class in a Phaser game has access to the this.game instance.
+
+#### Singleton
+A great way to use the Signals library is as a singleton. A singleton means there is only ever one instance of a class. The class can be accessed from anywhere in the code base at any time.
+
+The Signals library is not exported as a singleton. You can make it a singleton by creating a wrapper for it, like so:
+
+    Wrapper {
+        constructor() {
+            this = new Signals();
+        }
+    }
+    new Wrapper();
+    
+    SomeClass {
+        someFunc() {
+            Wrapper.registerSignal(...);
+        }
+    }
+
+A benefit to using a wrapper like this is that you are free to make other Signals instances elsewhere in your code base because it is the wrapper that is the singleton, not the Signals library itself.
+
+The problem in Phaser is that singletons like this are destroyed between states. So if you are switching states, you will want to use one of the next two options.
+
+#### Local Instance
+A local instance of the Signals library looks like this:
+
+    MyClass {
+        myFunc() {
+            this.signals = new Signals();
+        }
+    }
+    
+You will want to be purposeful about where you put your signals instances and how many you have.
+
+#### On the Game object (recommended)
+If you are looking for near global access to a Signals library instance, a great place to put it is on the Phaser game instance. Usually, every class in a Phaser code base has access to the _this.game_ instance.
+
+Another benefit here is that you will not need to create a new Signals instance with every new state your game enters because this.game object persists through the entire lifetime of your application.
 
     class MyClass {
 
         myFunc() {
+            
+            // You will most likely want to instantiate signals early on, like in your Game.js or a Boot or Load class.
+            
             this.game.signals = new Signals();
         }
     }
@@ -106,28 +196,22 @@ Usually, every class in a Phaser game has access to the this.game instance.
     class AnotherClass {
     
         anotherFunc() {
-            this.game.signals.registerSignal("key", listener, context, addOnce);
-
-            this.game.signals.sendSignal("key");
-
-            this.game.signals.removeSignal("key", listener, context);
-
-            this.game.signals.removeAllSignals();
+            this.game.signals.registerSignal("example", this.listener, this, true);
         }   
     }
 
-You can have more than one Signals instance in your game.
-
 ### Changing Game States
-If you are using states in your game, you must remove all signals between states. 
-Either right before or right after.
-Because/Or else...
+If you are using states in your game, you **_must remove all signals between states_**. 
+Either right before or right after starting a new state.
+You will have problems if you try to dispatch a signal that has listeners registered to it from a different state than you are in currently.
     
     this.game.signals.removeAllSignals();
     this.game.state.start("newState");
+    
+If you have other class instances on the this.game object which have signals in them, you will want to re-register the signals on a new state start. I usually have one public function called registerSignals() where I set up all my signals in a class.
 
 ## THE MIN.JS
-There are two library versions you can choose from.
+There are two library versions you can choose from. One is very "simple" with only the Signals class in it. The other is a "full" version that includes interfaces and a TargetObject that can be passed when dispatching a signal.
 
 ### Simple
 
@@ -142,7 +226,9 @@ There are two library versions you can choose from.
     signals.sendSignal("key", target);
 
 ### Getting it into your game
-Must have phaser. Compatible with these versions:
+Must have Phaser in your game. The Signals library is compatible with these Phaser versions:
+
+To see examples of how to set up your game with Signals, please see the unit test projects under [test](/test).
 
     index.html
     <script type="text/javascript" src="lib/phaser.min.js"></script>
@@ -183,12 +269,47 @@ I often make an empty class just to use as a holder for my consts. This is calle
     }
     
 ## UNIT TESTS
-Need to run npm install & grunt task then open index open the inspector
 
+In order to test the Signals library, I created a simple Phaser game for each min (simple and full). 
+
+### How to run the tests
+1. Run npm install
+- From the command line, navigate to the root of the game project (test/simple or test/full)
+- Type: _npm install_
+- Wait while the modules download. Watch the console output for errors. Address them if any.
+2. Run grunt task
+- Once your node modules are downloaded, type _grunt_ into you command line
+- Wait until you get a confirmation build message
+3. Open index.html in the browser
+4. Open the inspector or dev tools in your browser 
+- You will see console output detailing which tests have run and if they passed or failed
+
+Please open an [issue](https://github.com/genradley/PhaserSignals/issues) if you find any bugs. We will fix the issue and add a test for it.
 
 ## JSDOCS
+Please download or clone the repo and open [/docs/index.html](/docs/index.html) in a web browser
 
-## See my other libs
+## MY OTHER GITHUB PROJECTS
+
+[Align](https://github.com/genradley/Align) - A library for aligning display objects relative to one another.
+
+More coming soon...
 
 ## CREDITS
 This project used the [webpack-library-starter](https://github.com/krasimir/webpack-library-starter) project
+
+## ABOUT ME
+My name is Genell Radley. I am a game developer w/7yr professional experience writing games in Flash, Unity and HTML5. I believe in unit testing and documenting my code well. I am very excited to share my code here with you on GitHub. I hope you will contribute. 
+
+Please see my [github profile](https://github.com/genradley) and [linkedin profile](https://www.linkedin.com/in/genellradley/). 
+
+--
+(ignore this line. it is for seo purposes)
+Genell Radley
+Genell Radley
+Genell Radley
+Genell Radley
+Genell Radley
+Genell Radley
+Genell Radley
+Genell Radley
