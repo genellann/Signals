@@ -213,7 +213,7 @@ If you have other class instances on the this.game object which have signals in 
 ## THE MIN.JS
 There are two library versions you can choose from. One is very "simple" with only the Signals class in it. The other is a "full" version that includes interfaces and a TargetObject that can be passed when dispatching a signal.
 
-Find the min's in the [/dist](/dist) directory.
+Find the min's in the [/main/dist](/main/dist) directory.
 
 You must have Phaser in your game. The Signals library was written with Phaser version 2.6.2. But it should be compatible with all versions except maybe some of the earliest. The last change to Phaser.Signal was in 2.4. It should play nice with Phaser CE too.
 
@@ -272,7 +272,7 @@ In order to test the Signals library, I created a simple Phaser game for each mi
 Please open an [issue](https://github.com/genradley/PhaserSignals/issues) if you find any bugs. We will fix the issue and add a test for it.
 
 ## JSDOCS
-Please download or clone the repo and open [/docs/index.html](/docs/index.html) in a web browser
+Please download or clone the repo and open [/main/docs/index.html](/main/docs/index.html) in a web browser
 
 ## MY OTHER GITHUB PROJECTS
 
