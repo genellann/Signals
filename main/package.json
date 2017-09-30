@@ -24,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/genradley/PhaserSignals.git"
+    "url": "https://github.com/genradley/Signals.git"
   },
   "keywords": [
     "phaser",
@@ -36,7 +36,7 @@
   "author": "Genell Radley",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/genradley/PhaserSignals/issues"
+    "url": "https://github.com/genradley/Signals/issues"
   },
-  "homepage": "https://github.com/genradley/PhaserSignals"
+  "homepage": "https://github.com/genradley/Signals"
 }

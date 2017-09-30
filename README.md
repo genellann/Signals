@@ -269,7 +269,7 @@ In order to test the Signals library, I created a simple Phaser game for each mi
 4. Open the inspector or dev tools in your browser 
 - You will see console output detailing which tests have run and if they passed or failed
 
-Please open an [issue](https://github.com/genradley/PhaserSignals/issues) if you find any bugs. We will fix the issue and add a test for it.
+Please open an [issue](https://github.com/genradley/Signals/issues) if you find any bugs. We will fix the issue and add a test for it.
 
 ## JSDOCS
 Please download or clone the repo and open [/main/docs/index.html](/main/docs/index.html) in a web browser
