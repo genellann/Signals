@@ -33,14 +33,14 @@ Here is a scenerio of how signals work in Phaser out of the box:
 
 
     FIRST WAY:
+
     class ClassA {
         
         someFunc() {
             this.signal = new Phaser.Signal();
             this.signal.add(this.listener, this);
         }
-    }
-        
+    }        
     class ClassB {
 
         someFunc() {
@@ -48,7 +48,6 @@ Here is a scenerio of how signals work in Phaser out of the box:
             this.signal.add(this.listener, this);
         }
     }
-
     class ClassC {
     
         someFunc() {
@@ -59,8 +58,11 @@ Here is a scenerio of how signals work in Phaser out of the box:
             classB.signal.dispatch();
         }   
     }
+
     ---
+
     SECOND WAY:
+
     class MyClass {
     
         someFunc() {
