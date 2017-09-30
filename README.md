@@ -32,8 +32,6 @@ Here is a scenerio of how signals work in Phaser out of the box:
 - One to one ratio. In the above example, if I have another class that wants to listen to the signal, you have two ways you can do it (see below). Any way you do this, you end up with structural problems about where should a signal live (design) and what properties/methods should other classes be able to access (encapsulation).
 
 
-    FIRST WAY:
-
     class ClassA {
         
         someFunc() {
@@ -42,14 +40,14 @@ Here is a scenerio of how signals work in Phaser out of the box:
         }
     }        
     class ClassB {
-
+        
         someFunc() {
             this.signal = new Phaser.Signal();
             this.signal.add(this.listener, this);
         }
     }
     class ClassC {
-    
+        
         someFunc() {
             let classA = new ClassA();
             classA.signal.dispatch();
@@ -58,25 +56,22 @@ Here is a scenerio of how signals work in Phaser out of the box:
             classB.signal.dispatch();
         }   
     }
-
-    ---
-
-    SECOND WAY:
-
-    class MyClass {
     
+    ---
+    
+    class MyClass {
+        
         someFunc() {
             let classA = new ClassA();
             let classB = new ClassB();
-
+            
             let signal = new Phaser.Signal();
             signal.add(classA.listener, classA);
             signal.add(classB.listener, classB);
-
+            
             signal.dispatch();
         }   
     }
-
 
 ## BETTER WAY
 The Signals library gives you one object that all your signals live on. 
