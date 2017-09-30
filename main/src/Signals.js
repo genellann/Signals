@@ -25,6 +25,14 @@ class Signals /* implements ISignals, IDestructable */ {
     }
 
     /**
+     * Get a signal by its key.
+     * @param {string} key - The key mapped to a signal.
+     */
+    getSignal(key) {
+        return (this._signals.hasOwnProperty(key)) ? this._signals[key] : null;
+    }
+
+    /**
      * Register a listener to a signal key.
      * @param {string} key - The key mapped to a signal. Be sure to use unique keys.
      * @param {function} listener - The function that will respond when this signal is dispatched.

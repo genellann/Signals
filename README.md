@@ -24,13 +24,15 @@ Here is a scenerio of how signals work in Phaser out of the box:
         }   
     }
 
+[Phaser.Signal docs](http://phaser.io/docs/2.6.2/Phaser.Signal.html)
+
 ### Problems
 - You have to have a reference to the signal instance in order to dispatch the signal. 
 - This is a problem if you are wanting to properly encapsulate code because all your code needs to share references to the rest of the code.
 - One to one ratio. In the above example, if I have another class that wants to listen to the signal, you have two ways you can do it (see below). Any way you do this, you end up with structural problems about where should a signal live (design) and what properties/methods should other classes be able to access (encapsulation).
 
 
-    First Way -
+    FIRST WAY:
     class ClassA {
         
         someFunc() {
@@ -57,10 +59,8 @@ Here is a scenerio of how signals work in Phaser out of the box:
             classB.signal.dispatch();
         }   
     }
-.
-
-
-    Second Way -
+    ---
+    SECOND WAY:
     class MyClass {
     
         someFunc() {
@@ -79,7 +79,7 @@ Here is a scenerio of how signals work in Phaser out of the box:
 ## BETTER WAY
 The Signals library gives you one object that all your signals live on. 
 
-It allows you to create a signal while mapping it to a key. Then you are able to (1) add listeners to a signal, and (2) dispatch a signal by its key. 
+It allows you to create a signal while mapping it to a key. Then you are able to (1) add/remove listeners, and (2) dispatch a signal using its key. 
 
 ### Example
 
@@ -113,6 +113,12 @@ It allows you to create a signal while mapping it to a key. Then you are able to
 - You can send a signal whether or not there is something listening for it.
 
 ### Methods
+    /**
+     * Get a signal by its key.
+     * @param {string} key - The key mapped to a signal.
+     */
+    getSignal(key)
+    
     /**
      * Register a listener to a signal key.
      * @param {string} key - The key mapped to a signal. Be sure to use unique keys. 
@@ -213,26 +219,11 @@ If you have other class instances on the this.game object which have signals in 
 ## THE MIN.JS
 There are two library versions you can choose from. One is very "simple" with only the Signals class in it. The other is a "full" version that includes interfaces and a TargetObject that can be passed when dispatching a signal.
 
-### Simple
+Find the min's in the [/dist](/dist) directory.
 
-    let signals = new Signals();
-    
-### Full
-
-    let signals = new Signals.Signals();
-    
-    let target = new Signals.TargetObj(...);
-    signals.registerSignal(...);
-    signals.sendSignal("key", target);
-
-### Getting it into your game
-Must have Phaser in your game. The Signals library is compatible with these Phaser versions:
+You must have Phaser in your game. The Signals library was written with Phaser version 2.6.2. But it should be compatible with all versions except maybe some of the earliest. The last change to Phaser.Signal was in 2.4. It should play nice with Phaser CE too.
 
 To see examples of how to set up your game with Signals, please see the unit test projects under [test](/test).
-
-    index.html
-    <script type="text/javascript" src="lib/phaser.min.js"></script>
-    <script type="text/javascript" src="lib/phaser-signals-simple-0.0.1.min.js"></script>
 
 ### Recommendations
 Please use constants for your keys.
@@ -270,7 +261,7 @@ I often make an empty class just to use as a holder for my consts. This is calle
     
 ## UNIT TESTS
 
-In order to test the Signals library, I created a simple Phaser game for each min (simple and full). 
+In order to test the Signals library, I created a simple Phaser game for each min (simple and full). Find them [here](/test).
 
 ### How to run the tests
 1. Run npm install
@@ -291,7 +282,7 @@ Please download or clone the repo and open [/docs/index.html](/docs/index.html) 
 
 ## MY OTHER GITHUB PROJECTS
 
-[Align](https://github.com/genradley/Align) - A library for aligning display objects relative to one another.
+[Align](https://github.com/genradley/Align) - A library for aligning display objects in relation to one another.
 
 More coming soon...
 

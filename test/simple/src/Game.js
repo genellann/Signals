@@ -12,6 +12,9 @@ class Game extends Phaser.Game {
         super();
 
         this.before();
+        this.testGetSignal();
+
+        this.before();
         this.testRegisterSignal();
 
         this.before();
@@ -42,6 +45,19 @@ class Game extends Phaser.Game {
     before() {
         this.signals = null;
         this.signals = new Signals();
+    }
+
+    testGetSignal() {
+        console.log("Running Test: testGetSignal()");
+
+        this.signals.registerSignal(Game.ROSE, this.giveSun, this);
+
+        let signal = this.signals.getSignal(Game.ROSE);
+        if (!signal || signal._bindings[0]._listener !== this.giveSun || signal._bindings[0].context !== this) {
+            console.log("Failed");
+        } else {
+            console.log("Passed");
+        }
     }
 
     testRegisterSignal() {
