@@ -219,7 +219,7 @@ You must have Phaser in your game. The Signals library was written with Phaser v
 
 To see examples of how to set up your game with Signals, please see the unit test projects under [test](/test).
 
-### Recommendations
+## RECOMMENDATIONS
 Please use constants for your keys.
 
 Constants have great benefits, including but not limited to:
