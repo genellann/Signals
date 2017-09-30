@@ -31,6 +31,7 @@ Here is a scenerio of how signals work in Phaser out of the box:
 - This is a problem if you are wanting to properly encapsulate code because all your code needs to share references to the rest of the code.
 - One to one ratio. In the above example, if I have another class that wants to listen to the signal, you have two ways you can do it (see below). Any way you do this, you end up with structural problems about where should a signal live (design) and what properties/methods should other classes be able to access (encapsulation).
 
+---
 
     class ClassA {
         someFunc() {
