@@ -220,7 +220,7 @@ You must have Phaser in your game. The Signals library was written with Phaser v
 To see examples of how to set up your game with Signals, please see the unit test projects under [test](/test).
 
 ## RECOMMENDATIONS
-Please use constants for your keys.
+I recommend using constants for your keys.
 
 Constants have great benefits, including but not limited to:
 - They protect your code from typos. 
@@ -229,7 +229,7 @@ Constants have great benefits, including but not limited to:
 
 You can add consts at the bottom of any class with Object.defineProperties(). Consts are ALL-CAPS by convention.
 
-I often make an empty class just to use as a holder for my consts. This is called an enum.
+I often make an empty class (as an enum) just to use as a holder for my consts.
    
     import SignalKeys from "./SignalKeys"
     
@@ -276,7 +276,9 @@ Please download or clone the repo and open [/main/docs/index.html](/main/docs/in
 
 ## MY OTHER GITHUB PROJECTS
 
-[Align](https://github.com/genradley/Align) - A library for aligning display objects in relation to one another.
+[Align](https://github.com/genradley/Align) - A javascript library for aligning display objects in relation to one another.
+
+[AssetLoader](https://github.com/genradley/AssetLoader) - A library for Phaser. Load assets externally from a json file.
 
 More coming soon...
 
